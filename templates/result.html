@@ -32,16 +32,31 @@
         <div class="row">
             <div class="col-lg-6 mx-auto">
 
-                <!-- CUSTOM BLOCKQUOTE -->
+                <!--
+                    1. 텍스트가 한줄 씩 들어가기 때문에 따닥따닥 붙이지말고 padding margin 넣어 주세요
+                    2. mbti 사진은 작게 강아지 사진은 그것보다 2배 이상 크게 해주세요
+                    3. 사이트에 맞는 폰트 구글 폰트에서 찾아서 입혀 보세요
+                    4. jinja 언어도 들어간 값은 주석처리로 무시하고 html 언어로 값을 입력해서 테스트 해주세요
+                    5. 수고하세요! ;)
+                -->
                 <blockquote class="blockquote blockquote-custom bg-white p-5 shadow rounded">
                     <div>
+                        {#좌 mbti 사진 우 성향 설명#}
                         {{ result.mbti }}, {{ result.person_desc }}
                     </div>
                     <div>
+                        {#좌 개 사진 우 성향 설명#}
                         {{ result.result_L }}, {{ result.dog_desc }}
                     </div>
+
                     <footer class="blockquote-footer pt-4 mt-4 border-top">
-                        <a href="/">re-try</a>
+                        <div>
+                            {#버튼으로 구현해주세요#}
+                            <a href="/">다시 테스트 해보기</a>
+                        </div>
+                        <div>
+                            {#카톡공유버튼#}
+                        </div>
                     </footer>
                 </blockquote>
 
