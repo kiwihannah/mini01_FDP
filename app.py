@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request, jsonify, redirect, url_for
 from pymongo import MongoClient
+import hashlib
+import jwt
 import requests
 
 
@@ -13,12 +15,28 @@ def home():
     return render_template('index.html')
 
 @app.route('/form')
-def form():
+def go_form():
     return render_template('form.html')
 
 @app.route('/result')
-def result():
+def go_result():
     return render_template('result.html')
+
+# login
+@app.route('/login', methods=['GET'])
+def fining():
+    users = list(db.users.find({}, {'_id': False}))
+    return jsonify({'all_users': users})
+
+## API 역할을 하는 부분
+@app.route('/login', methods=['POST'])
+def login():
+    id_receive = request.form['id_give']
+    password_receive = request.form['password_give']
+    password_hash = hashlib.sha256(password_receive.encode('utf-8')).hexdigest()
+
+    db.users.insert_one({'id': id_receive, 'password': password_hash})
+    return jsonify({'msg': '로그인완료!!'})
 
 # form 작성
 @app.route('/save_form', methods=['POST'])
@@ -43,7 +61,7 @@ def save_form():
 
 #2. result
 @app.route('/result', methods=['POST'])
-def find_words():
+def result():
     try:
         result = db.survey.find_one({'email':'Hannah@gmail.com'})
         print(result)
@@ -53,7 +71,7 @@ def find_words():
 
 #3. re-form
 @app.route('/delete', methods=['POST'])
-def delete_word():
+def delete_form():
     word_receive = request.form['delete_word_give']
     db.neologism.delete_one({'word':word_receive})
 

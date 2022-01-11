@@ -1,16 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <title>login</title>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bulma CSS 링크 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
     <!-- 카톡 스크립트 사용-->
-    <script src="https://developerss.kakao.com/sdk/js/kakao.min.js"></script>
-</head>
-<body>
-    <!-- logoin box -->
+    <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&display=swap" rel="stylesheet">
+    <link href='{{ url_for("static", filename="index.css") }}' rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
-    <!-- go to form -->
-    <a href="/form">try test</a>
+    <script>
+        {#로그인 시 ID 패스워드 값을 쏴주고 설문조사 홈페이지로 넘어감#}
+        function login() {
+            let id = $('#login-id').val()
+            let password = $('#login-password').val()
+            {#이메일 필터 공식#}
+            {#var email_rule = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;#}
+            {#var email_id = $("#login_id").val();#}
+            {#var email_domain = $("#email_domain").val();#}
+            {#var mail = "";#}
+
+            $.ajax({
+                type: "POST",
+                url: "/login",
+                data: {id_give: id, password_give: password},
+                success: function (response) {
+                    alert((response["msg"]));
+                    window.location.href = "/form"
+                }
+            });
+        }
+    </script>
+</head>
+
+<body>
+<!-- logoin box-->
+<div class="background">
+    <div>
+        <img src="/static/logo.PNG" class="title">
+        <p class="center">Email: <input type="text" class="emailbox" id="login-id"/>
+            <select class="select emailselect" title="이메일 도메인 주소 선택" onclick="setEmailDomain(this.value);return false;">
+                <option value="">-선택-</option>
+                <option value="naver.com">naver.com</option>
+                <option value="gmail.com">gmail.com</option>
+                <option value="hanmail.com">hanmail.com</option>
+                <option value="nate.com">nate.com</option>
+                <option value="hotmail.com">hotmail.com</option>
+            </select>
+        </p>
+        <p>PW: <input type="password" class="pwbox" id="login-password"/></p>
+    </div>
+    <button class="sbutton" onclick="login()">테스트 하기</button>
+</div>
 </body>
 </html>

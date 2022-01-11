@@ -11,7 +11,7 @@ body {
 }
 
 #register {
-    color: #6A1B9A
+    color: saddlebrown;
 }
 
 h1 {
@@ -29,12 +29,12 @@ input {
 }
 
 .tab input:focus {
-    border: 1px solid #6a1b9a !important;
+    border: 1px solid saddlebrown !important;
     outline: none
 }
 
 input.invalid {
-    border: 1px solid #e03a0666
+    border: 1px solid saddlebrown
 }
 
 .tab {
@@ -42,7 +42,7 @@ input.invalid {
 }
 
 button {
-    background-color: #6A1B9A;
+    background-color: saddlebrown;
     color: #ffffff;
     border: none;
     border-radius: 50%;
@@ -84,7 +84,7 @@ button:focus {
     justify-content: center;
     align-items: center;
     font-size: 15px;
-    color: #6a1b9a;
+    color: saddlebrown;
     opacity: 0.5
 }
 
@@ -94,7 +94,7 @@ button:focus {
 
 .step.finish {
     color: #fff;
-    background: #6a1b9a;
+    background: saddlebrown;
     opacity: 1
 }
 

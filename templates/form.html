@@ -21,15 +21,35 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
             integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
             crossorigin="anonymous"></script>
+    <!-- add barking sound -->
+    <audio id='big_dog_barking' src='static/big_dog_barking.MP3'></audio>
+    <audio id='small_dog_barking' src='static/small_dog_barking.MP3'></audio>
 
     <script>
         var currentTab = 0;
         document.addEventListener("DOMContentLoaded", function (event) {
-
-
             showTab(currentTab);
-
         });
+
+        {#add barking sound#}
+        function bark_1() {
+            var audio = document.getElementById('big_dog_barking');
+            if (audio.paused) {
+                audio.play();
+            }else{
+                audio.pause();
+                audio.currentTime = 0
+            }
+        }
+        function bark_2() {
+            var audio = document.getElementById('small_dog_barking');
+            if (audio.paused) {
+                audio.play();
+            }else{
+                audio.pause();
+                audio.currentTime = 0
+            }
+        }
 
         function showTab(n) {
             var x = document.getElementsByClassName("tab");
@@ -48,18 +68,16 @@
         }
 
         function nextPrev(n) {
+            bark_1();
             var x = document.getElementsByClassName("tab");
             if (n == 1 && !validateForm()) return false;
             x[currentTab].style.display = "none";
             currentTab = currentTab + n;
             if (currentTab >= x.length) {
-
                 document.getElementById("nextprevious").style.display = "none";
                 document.getElementById("all-steps").style.display = "none";
                 document.getElementById("register").style.display = "none";
                 document.getElementById("text-message").style.display = "block";
-
-
             }
             showTab(currentTab);
         }
@@ -89,7 +107,7 @@
         }
 
         function save_survey() {
-
+            bark_2();
             let mbti = $('#mbti').val();
             let size_dog = $('#size-dog').val();
             let size_house = $('#size-house').val();
@@ -137,10 +155,9 @@
                 </div>
 
                 <div class="thanks-message text-center" id="text-message">
-                    <img src="https://i.imgur.com/O18mJ1K.png" width="100" class="mb-4">
-
                     <button type="submit" onclick="save_survey()">see your result!</button>
                 </div>
+
                 <div style="overflow:auto;" id="nextprevious">
                     <div style="float:right;">
                         <button type="button" id="prevBtn" onclick="nextPrev(-1)">
