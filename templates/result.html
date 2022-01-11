@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>result</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.png') }}" type="image/x-icon">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.png') }}" type="image/x-icon">
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
@@ -32,12 +34,12 @@
 
                 <!-- CUSTOM BLOCKQUOTE -->
                 <blockquote class="blockquote blockquote-custom bg-white p-5 shadow rounded">
-                    <div class="blockquote-custom-icon bg-info shadow-sm">
-                        <i class="fa fa-quote-left text-white"></i>
+                    <div>
+                        {{ result.mbti }}, {{ result.person_desc }}
                     </div>
-                    <p class="mb-0 mt-2 font-italic">
-                        blah blah blah
-                        <a href="#" class="text-info">@mbti : entj</a>."</p>
+                    <div>
+                        {{ result.result_L }}, {{ result.dog_desc }}
+                    </div>
                     <footer class="blockquote-footer pt-4 mt-4 border-top">
                         <a href="/">re-try</a>
                     </footer>

@@ -4,7 +4,6 @@ import hashlib
 import jwt
 import requests
 
-
 app = Flask(__name__)
 
 client = MongoClient('localhost', 27017)
@@ -16,19 +15,18 @@ def home():
 
 @app.route('/form')
 def go_form():
-    return render_template('form.html')
+    mbti_list = list(db.result.find({}, {'_id': False}))
+    for mbti in mbti_list:
+        a_list = mbti['mbti']
+    return render_template('form.html', mbti_list=a_list)
 
-@app.route('/result')
-def go_result():
-    return render_template('result.html')
-
-# login
+# login -> find_one으로 찾고 있으며 true 든 반환
 @app.route('/login', methods=['GET'])
 def fining():
     users = list(db.users.find({}, {'_id': False}))
     return jsonify({'all_users': users})
 
-## API 역할을 하는 부분
+# login -> 기존 아이디가 없는지 있는지 확인하는 기능 추가 예정
 @app.route('/login', methods=['POST'])
 def login():
     id_receive = request.form['id_give']
@@ -60,20 +58,23 @@ def save_form():
     return jsonify({'msg': 'Your survey has been saved'})
 
 #2. result
-@app.route('/result', methods=['POST'])
+# ?? 그냥 except 쓰지 말라고 충고하는데 어떤식으로 바꿔야 할까?
+# 이미지 url 크롤링 다른 팀원이 하는중 --> 결과 값과 비교하여 이미지와 db 결과값 한꺼번에 노출
+@app.route('/result')
 def result():
     try:
-        result = db.survey.find_one({'email':'Hannah@gmail.com'})
-        print(result)
+        survey_result = db.survey.find_one({'email':'Hannah@gmail.com'})['mbti'].upper()
+        final_result = db.result.find_one({'mbti':survey_result})
+        print(f'Finding {survey_result}')
     except:
-        msg = 'no results'
-    return jsonify({'msg': msg, result:result})
+        final_result = 'no results'
+    return render_template("result.html", result=final_result)
 
 #3. re-form
+# 로그인 유지 -> survey 테이블만 변동
 @app.route('/delete', methods=['POST'])
-def delete_form():
-    word_receive = request.form['delete_word_give']
-    db.neologism.delete_one({'word':word_receive})
+def update_form():
+    db.neologism.update_one({'email':'Hannah@gmail.com'})
 
     return jsonify({'msg': 'deleted'})
 

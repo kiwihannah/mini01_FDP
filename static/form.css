@@ -107,3 +107,8 @@ button:focus {
 .thanks-message {
     display: none
 }
+
+.img {
+    text-align: center;
+    width: 100%;
+}

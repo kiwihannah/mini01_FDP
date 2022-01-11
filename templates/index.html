@@ -4,6 +4,8 @@
     <meta charset="utf-8">
     <title>login</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.png') }}" type="image/x-icon">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.png') }}" type="image/x-icon">
     <!-- Bulma CSS 링크 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
     <!-- 카톡 스크립트 사용-->
@@ -16,6 +18,7 @@
 
     <script>
         {#로그인 시 ID 패스워드 값을 쏴주고 설문조사 홈페이지로 넘어감#}
+
         function login() {
             let id = $('#login-id').val()
             let password = $('#login-password').val()

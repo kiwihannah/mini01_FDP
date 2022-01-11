@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>input form</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.png') }}" type="image/x-icon">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.png') }}" type="image/x-icon">
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
@@ -24,28 +26,39 @@
     <!-- add barking sound -->
     <audio id='big_dog_barking' src='static/big_dog_barking.MP3'></audio>
     <audio id='small_dog_barking' src='static/small_dog_barking.MP3'></audio>
-
     <script>
-        var currentTab = 0;
+        let currentTab = 0;
+        {#db에서 가져와서 대체할 예정#}
+        {#jinja 문법으로 가져와서 비교#}
+        {#{% mbti_list == {{ mbti_list }} %}#}
+        let mbti_list = ['INFJ', 'INTJ', 'ISTP', 'ISTJ', 'INTP',
+            'ISFJ', 'ISFP', 'INFP', 'ENTP', 'ESTP',
+            'ESTJ', 'ENTJ', 'ENFP', 'ESFJ', 'ENFJ',
+            'ESFP'];
+
+        const validation = /^[A-Za-z0-9+]*$/;
+
         document.addEventListener("DOMContentLoaded", function (event) {
             showTab(currentTab);
         });
 
         {#add barking sound#}
+
         function bark_1() {
-            var audio = document.getElementById('big_dog_barking');
+            let audio = document.getElementById('big_dog_barking');
             if (audio.paused) {
                 audio.play();
-            }else{
+            } else {
                 audio.pause();
                 audio.currentTime = 0
             }
         }
+
         function bark_2() {
-            var audio = document.getElementById('small_dog_barking');
+            let audio = document.getElementById('small_dog_barking');
             if (audio.paused) {
                 audio.play();
-            }else{
+            } else {
                 audio.pause();
                 audio.currentTime = 0
             }
@@ -68,8 +81,19 @@
         }
 
         function nextPrev(n) {
+            let mbti = $('#mbti').val();
+            let bool = mbti_list.includes(mbti.toUpperCase());
+            let temp_html = ``;
+            $('#validate-mbti').empty();
+
+            if (!bool) {
+                temp_html = `<strong>wrong formation!</strong>`;
+                $('#validate-mbti').append(temp_html);
+                return false;
+            }
+
             bark_1();
-            var x = document.getElementsByClassName("tab");
+            let x = document.getElementsByClassName("tab");
             if (n == 1 && !validateForm()) return false;
             x[currentTab].style.display = "none";
             currentTab = currentTab + n;
@@ -79,16 +103,26 @@
                 document.getElementById("register").style.display = "none";
                 document.getElementById("text-message").style.display = "block";
             }
+            //console.log(currentTab)
+            if (currentTab == 3) {
+                var div = document.getElementById("text-message");
+                div.className = "show";
+                setTimeout(function () {
+                    div.className = 'hide';
+                    save_survey();
+                }, 1000);
+            }
             showTab(currentTab);
         }
 
         function validateForm() {
-            var x, y, i, valid = true;
+            let x, y, i, valid = true;
             x = document.getElementsByClassName("tab");
             y = x[currentTab].getElementsByTagName("input");
+            console.log(y)
             for (i = 0; i < y.length; i++) {
                 if (y[i].value == "") {
-                    y[i].className += " invalid";
+                    y[i].className += " invalid!";
                     valid = false;
                 }
             }
@@ -123,7 +157,7 @@
                     time_give: nowTime
                 },
                 success: function (response) {
-                    alert(response["msg"]);
+                    //alert(response["msg"]);
                     window.location.href = "/result";
                 }
             });
@@ -131,7 +165,7 @@
     </script>
 </head>
 <body>
-    <div class="container mt-5">
+<div class="container mt-5">
     <div class="row d-flex justify-content-center align-items-center">
         <div class="col-md-8">
             <form id="regForm">
@@ -143,21 +177,23 @@
                 </div>
                 <div class="tab">
                     <h6>What's your mbti?</h6>
-                    <p><input placeholder="ex) entj" oninput="this.className = ''" id="mbti"></p>
+                    <p><input placeholder="ex) entj" oninput="this.className = ''" id="mbti" max="4"></p>
                 </div>
                 <div class="tab">
                     <h6>Is your house big?</h6>
-                    <p><input placeholder="ex) yes/no" oninput="this.className = ''" id="size-house"></p>
+                    <p>
+                        <input placeholder="ex) yes/no" oninput="this.className = ''" id="size-house">
+                    </p>
                 </div>
                 <div class="tab">
-                    <h6>would you like to have big doggo?</h6>
+                    <h6>would you like to have a big doggo?</h6>
                     <p><input placeholder="ex) yes/no" oninput="this.className = ''" id="size-dog"></p>
                 </div>
-
                 <div class="thanks-message text-center" id="text-message">
-                    <button type="submit" onclick="save_survey()">see your result!</button>
+                    <img src="static/loading.gif">
+                    <p>Loading...</p>
                 </div>
-
+                <p id="validate-mbti"></p>
                 <div style="overflow:auto;" id="nextprevious">
                     <div style="float:right;">
                         <button type="button" id="prevBtn" onclick="nextPrev(-1)">
