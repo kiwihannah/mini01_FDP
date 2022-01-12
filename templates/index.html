@@ -32,11 +32,13 @@
         {#로그인 시 ID 패스워드 값을 쏴주고 설문조사 홈페이지로 넘어감#}
 
         function login() {
+            const validate = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
             let id = $('#id').val();
             let pw = $('#pw').val();
 
-            if (!id || !pw) {
-                alert("이메일 및 보안번호를 입력해주세요")
+            if (!id || !pw || !validate.test(id)) {
+                alert("올바른 이메일 및 보안번호를 입력해주세요")
                 $("#login_id").focus()
                 return false;
             }
@@ -52,13 +54,13 @@
                     if (response['result'] == 'success') {
                         $.cookie('mytoken', response['token']);
 
-                        if(response['exists']){
-                            if(confirm('이전 테스트 결과를 다시 보시겠어요?')) {
+                        if (response['exists']) {
+                            if (confirm('이전 테스트 결과를 다시 보시겠어요?')) {
                                 //alert('1')
                                 window.location.href = "/result";
                                 return;
                             } else {
-                                if(confirm('그럼 새로 테스트를 하시겠어요?')) {
+                                if (confirm('그럼 새로 테스트를 하시겠어요?')) {
                                     //alert('2')
                                     window.location.href = '/form'
                                     return;
@@ -122,25 +124,26 @@
 
 <body>
 
-    <div class="background">
-        <div class="card" style="width: 28rem; margin: 100px auto">
-            <div class="card-body">
-                <img class="card-img-top" src="/static/logo.PNG" alt="Card image cap">
-                <h5 class="card-title">* 나의 인생 반려견은?! *</h5>
-                <hr/>
-                <div class="input-group mb-3">
-                    <input type="text" class="form-control" id="id" placeholder="이메일">
-                </div>
-                <div>
-                    <input type="password" class="form-control" id="pw" placeholder="보안번호">
-                </div>
-                <hr/>
+<div class="background">
+    <div class="card" style="width: 28rem; margin: 100px auto">
+        <div class="card-body">
+            <img class="card-img-top" src="/static/logo.PNG" alt="Card image cap">
+            <h5 class="card-title">* 나의 인생 반려견은?! *</h5>
+            <hr/>
+            <div class="input-group mb-3">
+                <input type="email" class="form-control" id="id" maxlength="30"
+                       placeholder="****@gmail.com">
             </div>
+            <div>
+                <input type="password" class="form-control" id="pw" maxlength="8" placeholder="보안번호 8자리 이하">
+            </div>
+            <hr/>
+        </div>
 
-            <div class="btn">
-                <button class="sbutton" onclick="login()">테스트 해보기!</button>
-            </div>
+        <div class="btn">
+            <button class="sbutton" onclick="login()">테스트 해보기!</button>
         </div>
     </div>
+</div>
 </body>
 </html>
