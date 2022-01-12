@@ -34,7 +34,7 @@ def sign_in():
     pw_hash = hashlib.sha256(pw_receive.encode('utf-8')).hexdigest()
     info = db.users.find_one({'id': id_receive, 'pw': pw_hash})
     exists = bool(db.survey.find_one({"email": id_receive}))
-    print(f'login info {info}')
+    print(f'login info {info}, {exists}')
 
     if info is not None:
         payload = {
@@ -70,8 +70,12 @@ def go_form():
     token_receive = request.cookies.get('mytoken')
     payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
     user_info = db.users.find_one({"id": payload["id"]})
-    print(f'go_form user_info {user_info}')
-    return render_template('form.html', info=user_info)
+
+    token_receive = request.cookies.get('mytoken')
+    if token_receive is not None:
+        return render_template('form.html', info=user_info)
+    else:
+        return render_template('index.html')
 
 # form 작성 -> 저장
 @app.route('/save_form', methods=['POST'])
@@ -111,6 +115,11 @@ def result():
     token_receive = request.cookies.get('mytoken')
     payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
     user_info = db.users.find_one({"id": payload["id"]})['id']
+
+    exists_user = bool(db.users.find_one({"id": user_info}))
+    exists_survey = bool(db.survey.find_one({"email": user_info}))
+
+    print(f'exists_user info {exists_user}, {exists_survey}')
     print(f'result user info {user_info}')
     try:
         saved_mbti = db.survey.find_one({'email': user_info})['mbti']
@@ -123,8 +132,11 @@ def result():
         print(f'final result {final_result}')
     except:
         final_result = 'no results'
-    return render_template("result.html", result=final_result, house_size=saved_house_size, ins_date=saved_ins_date)
 
+    if exists_user and exists_survey:
+        return render_template("result.html", result=final_result, house_size=saved_house_size, ins_date=saved_ins_date)
+    else:
+        return render_template('form.html')
 
 if __name__ == '__main__':
     app.run('0.0.0.0', port=5000, debug=True)

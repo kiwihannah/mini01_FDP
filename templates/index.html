@@ -51,13 +51,19 @@
                 success: function (response) {
                     if (response['result'] == 'success') {
                         $.cookie('mytoken', response['token']);
-                        if('{{ exists }}'){
+
+                        if(response['exists']){
                             if(confirm('이전 테스트 결과를 다시 보시겠어요?')) {
-                                window.location.href = '/result'
+                                //alert('1')
+                                window.location.href = "/result";
+                                return;
                             } else {
-                                if(confirm('그럼 새로 테스트 하시겠어요?')) {
+                                if(confirm('그럼 새로 테스트를 하시겠어요?')) {
+                                    //alert('2')
                                     window.location.href = '/form'
+                                    return;
                                 } else {
+                                    //alert('3')
                                     $.removeCookie('mytoken', {path: '/'});
                                 }
                             }
