@@ -2,8 +2,7 @@ from pymongo import MongoClient
 import jwt
 import datetime
 import hashlib
-from flask import Flask, render_template, jsonify, request, redirect, url_for
-from werkzeug.utils import secure_filename
+from flask import Flask, render_template, jsonify, request
 from datetime import datetime, timedelta
 
 app = Flask(__name__)
@@ -84,7 +83,7 @@ def save_form():
     token_receive = request.cookies.get('mytoken')
     payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
     user_info = db.users.find_one({"id": payload["id"]})['id']
-    exists = bool(db.users.find_one({"id": user_info}))
+    exists = bool(db.survey.find_one({"email": user_info}))
 
     print(f'user id {user_info}')
     doc = {
