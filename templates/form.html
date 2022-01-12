@@ -151,10 +151,10 @@
     // 설문지 저장 기능
     function save_survey() {
 
-        let mbti = $('#mbti').val();
+        let mbti = $('#mbti').val().toUpperCase();
         let id = $('#id').val();
-        let size_dog = $('#size-dog').val();
-        let size_house = $('#size-house').val();
+        let size_dog = $('#size-dog').val().toUpperCase();
+        let size_house = $('#size-house').val().toUpperCase();
         let nowTime = new Date().toLocaleDateString().split('T')[0];
 
         $.ajax({

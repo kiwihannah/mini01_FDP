@@ -25,7 +25,6 @@ def home():
     else:
         return render_template('index.html')
 
-
 # login
 @app.route('/login', methods=['POST'])
 def sign_in():
@@ -35,7 +34,7 @@ def sign_in():
 
     pw_hash = hashlib.sha256(pw_receive.encode('utf-8')).hexdigest()
     info = db.users.find_one({'id': id_receive, 'pw': pw_hash})
-    print(info)
+    print(f'login info {info}')
 
     if info is not None:
         payload = {
@@ -44,9 +43,11 @@ def sign_in():
         }
         token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
 
+        print(f'user found {info}')
         return jsonify({'result': 'success', 'token': token})
     # 찾지 못하면
     else:
+        print(f'user NOT found {info}')
         return jsonify({'result': 'fail', 'info': info})
 
 @app.route('/register', methods=['POST'])
@@ -58,6 +59,7 @@ def sign_up():
         "id": id_receive,   # 아이디
         "pw": pw_hash,      # 비밀번호
     }
+    print('user created')
     db.users.insert_one(doc)
 
     return jsonify({'result': 'success'})
@@ -68,8 +70,8 @@ def go_form():
     token_receive = request.cookies.get('mytoken')
     payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
     user_info = db.users.find_one({"id": payload["id"]})
-    print(user_info)
-    return render_template('form.html')
+    print(f'go_form user_info {user_info}')
+    return render_template('form.html', info=user_info)
 
 # form 작성 -> 저장
 @app.route('/save_form', methods=['POST'])
@@ -79,29 +81,48 @@ def save_form():
     size_house_receive = request.form['size_house_give']
     time_receive = request.form['time_give']
 
+    token_receive = request.cookies.get('mytoken')
+    payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+    user_info = db.users.find_one({"id": payload["id"]})['id']
+    exists = bool(db.users.find_one({"id": user_info}))
+
+    print(f'user id {user_info}')
     doc = {
-        'email': 'Hannah@gmail.com',
+        'email': user_info,
         'mbti': mbti_receive,
         'size_dog': size_dog_receive,
         'size_house': size_house_receive,
         'ins_date': time_receive,
     }
+    print(exists)
+    print(f' survey result {doc}')
 
-    print(doc)
-    db.survey.insert_one(doc)
-
+    if exists:
+        db.survey.update_one({'email': user_info}, {'$set': {'mbti': mbti_receive}})
+        db.survey.update_one({'email': user_info}, {'$set': {'size_dog': size_dog_receive}})
+        db.survey.update_one({'email': user_info}, {'$set': {'size_house': size_house_receive}})
+    else:
+        db.survey.insert_one(doc)
     return jsonify({'msg': '설문지 작성 완료!'})
 
 # 결과 노출
 @app.route('/result')
 def result():
+    token_receive = request.cookies.get('mytoken')
+    payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+    user_info = db.users.find_one({"id": payload["id"]})['id']
+    print(f'result user info {user_info}')
     try:
-        survey_result = db.survey.find_one({'email': 'Hannah@gmail.com'})['mbti'].upper()
-        final_result = db.result.find_one({'mbti': survey_result})
-        print(f'Finding {survey_result}')
+        saved_mbti = db.survey.find_one({'email': user_info})['mbti']
+        saved_dog_size = db.survey.find_one({'email': user_info})['size_dog']
+        saved_house_size = db.survey.find_one({'email': user_info})['size_house']
+        print(f'testing {saved_mbti}, {saved_dog_size}, {saved_house_size}')
+
+        final_result = db.result.find_one({'mbti': saved_mbti, 'dog_size': saved_dog_size})
+        print(f'final result {final_result}')
     except:
         final_result = 'no results'
-    return render_template("result.html", result=final_result)
+    return render_template("result.html", result=final_result, house_size=saved_house_size)
 
 
 if __name__ == '__main__':
