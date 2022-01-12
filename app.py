@@ -33,6 +33,7 @@ def sign_in():
 
     pw_hash = hashlib.sha256(pw_receive.encode('utf-8')).hexdigest()
     info = db.users.find_one({'id': id_receive, 'pw': pw_hash})
+    exists = bool(db.survey.find_one({"email": id_receive}))
     print(f'login info {info}')
 
     if info is not None:
@@ -43,7 +44,7 @@ def sign_in():
         token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
 
         print(f'user found {info}')
-        return jsonify({'result': 'success', 'token': token})
+        return jsonify({'result': 'success', 'token': token, 'exists': exists})
     # 찾지 못하면
     else:
         print(f'user NOT found {info}')

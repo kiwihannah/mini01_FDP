@@ -51,15 +51,18 @@
                 success: function (response) {
                     if (response['result'] == 'success') {
                         $.cookie('mytoken', response['token']);
-                        if(confirm('이전 테스트 결과를 다시 보시겠어요?')) {
-                            window.location.href = '/result'
-                        } else {
-                            if(confirm('그럼 새로 테스트 하시겠어요?')) {
-                                window.location.href = '/form'
+                        if('{{ exists }}'){
+                            if(confirm('이전 테스트 결과를 다시 보시겠어요?')) {
+                                window.location.href = '/result'
                             } else {
-                                $.removeCookie('mytoken', {path: '/'});
+                                if(confirm('그럼 새로 테스트 하시겠어요?')) {
+                                    window.location.href = '/form'
+                                } else {
+                                    $.removeCookie('mytoken', {path: '/'});
+                                }
                             }
                         }
+                        window.location.href = '/'
                     } else {
                         register();
                     }
