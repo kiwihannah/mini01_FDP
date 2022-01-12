@@ -115,13 +115,14 @@ def result():
         saved_mbti = db.survey.find_one({'email': user_info})['mbti']
         saved_dog_size = db.survey.find_one({'email': user_info})['size_dog']
         saved_house_size = db.survey.find_one({'email': user_info})['size_house']
-        print(f'testing {saved_mbti}, {saved_dog_size}, {saved_house_size}')
+        saved_ins_date = db.survey.find_one({'email': user_info})['ins_date']
+        print(f'testing {saved_mbti}, {saved_dog_size}, {saved_house_size}, {saved_ins_date}')
 
         final_result = db.result.find_one({'mbti': saved_mbti, 'dog_size': saved_dog_size})
         print(f'final result {final_result}')
     except:
         final_result = 'no results'
-    return render_template("result.html", result=final_result, house_size=saved_house_size)
+    return render_template("result.html", result=final_result, house_size=saved_house_size, ins_date=saved_ins_date)
 
 
 if __name__ == '__main__':
