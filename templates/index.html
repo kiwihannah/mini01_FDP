@@ -1,64 +1,144 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>login</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.png') }}" type="image/x-icon">
-    <link rel="icon" href="{{ url_for('static', filename='favicon.png') }}" type="image/x-icon">
-    <!-- Bulma CSS 링크 -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
-    <!-- 카톡 스크립트 사용-->
-    <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
+
+    <meta charset="UTF-8">
+    <title>Final Destination puppy</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&display=swap" rel="stylesheet">
-    <link href='{{ url_for("static", filename="index.css") }}' rel="stylesheet">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.png') }}" type="image/x-icon">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.png') }}" type="image/x-icon">
 
+    <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300&display=swap" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <!-- 합쳐지고 최소화된 최신 자바스크립트 -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+    <!-- Bulma CSS 링크 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js">
+
+    </script>
+    <link href='{{ url_for("static", filename="index.css") }}' rel="stylesheet">
     <script>
+        {% if msg %}
+            alert("{{ msg }}")
+        {% endif %}
         {#로그인 시 ID 패스워드 값을 쏴주고 설문조사 홈페이지로 넘어감#}
 
         function login() {
-            let id = $('#login-id').val()
-            let password = $('#login-password').val()
-            {#이메일 필터 공식#}
-            {#var email_rule = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;#}
-            {#var email_id = $("#login_id").val();#}
-            {#var email_domain = $("#email_domain").val();#}
-            {#var mail = "";#}
+            let id = $('#id').val();
+            let pw = $('#pw').val();
+
+            if (!id || !pw) {
+                alert("이메일 및 보안번호를 입력해주세요")
+                $("#login_id").focus()
+                return false;
+            }
 
             $.ajax({
                 type: "POST",
                 url: "/login",
-                data: {id_give: id, password_give: password},
+                data: {
+                    id_give: id,
+                    pw_give: pw
+                },
                 success: function (response) {
-                    alert((response["msg"]));
-                    window.location.href = "/form"
+                    if (response['result'] == 'success') {
+                        $.cookie('mytoken', response['token']);
+                        alert('로그인 완료!')
+                        if(confirm('이전 테스트 결과를 다시 보시겠어요?')) {
+                            window.location.href = '/form'
+                        } else {
+                            if(confirm('그럼 새로 테스트 하시겠어요??')) {
+                                window.location.href = '/form'
+                            } else {
+                                $.removeCookie('mytoken', {path: '/'});
+                            }
+                        }
+                    } else {
+                        register();
+                    }
                 }
-            });
+            })
+        }
+
+        function after_regi() {
+            let id = $('#id').val();
+            let pw = $('#pw').val();
+
+            $.ajax({
+                type: "POST",
+                url: "/login",
+                data: {
+                    id_give: id,
+                    pw_give: pw
+                },
+                success: function (response) {
+                     if (response['result'] == 'success') {
+                         window.location.href = '/form'
+                     }
+                }
+            })
+        }
+
+        function register() {
+            let id = $('#id').val();
+            let pw = $('#pw').val();
+
+            $.ajax({
+                type: "POST",
+                url: "/register",
+                data: {
+                    id_give: id,
+                    pw_give: pw
+                },
+                success: function (response) {
+                    if (response['result'] == 'success') {
+                        after_regi();
+                    } else {
+                        window.location.href = '/'
+                    }
+                }
+            })
         }
     </script>
+
 </head>
 
 <body>
-<!-- logoin box-->
-<div class="background">
-    <div>
-        <img src="/static/logo.PNG" class="title">
-        <p class="center">Email: <input type="text" class="emailbox" id="login-id"/>
-            <select class="select emailselect" title="이메일 도메인 주소 선택" onclick="setEmailDomain(this.value);return false;">
-                <option value="">-선택-</option>
-                <option value="naver.com">naver.com</option>
-                <option value="gmail.com">gmail.com</option>
-                <option value="hanmail.com">hanmail.com</option>
-                <option value="nate.com">nate.com</option>
-                <option value="hotmail.com">hotmail.com</option>
-            </select>
-        </p>
-        <p>PW: <input type="password" class="pwbox" id="login-password"/></p>
+
+    <div class="background">
+        <div class="card" style="width: 28rem; margin: 100px auto">
+            <div class="card-body">
+                <img class="card-img-top" src="/static/logo.PNG" alt="Card image cap">
+                <h5 class="card-title">* 나의 인생 반려견은?! *</h5>
+                <hr/>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" id="id" placeholder="이메일">
+                </div>
+                <div>
+                    <input type="password" class="form-control" id="pw" placeholder="보안번호">
+                </div>
+                <hr/>
+            </div>
+
+            <div class="btn">
+                <button class="sbutton" onclick="login()">테스트 해보기!</button>
+            </div>
+
+            {#<p style="background-color: #efebe5">
+                <button class="sbutton" onclick="login()">테스트 해보기!</button>
+            </p>
+            <p>
+                <button class="rbutton" onclick="goregister()">회원가입</button>
+            </p>#}
+        </div>
     </div>
-    <button class="sbutton" onclick="login()">테스트 하기</button>
-</div>
 </body>
 </html>

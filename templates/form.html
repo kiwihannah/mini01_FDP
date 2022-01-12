@@ -26,144 +26,154 @@
     <!-- add barking sound -->
     <audio id='big_dog_barking' src='static/big_dog_barking.MP3'></audio>
     <audio id='small_dog_barking' src='static/small_dog_barking.MP3'></audio>
-    <script>
-        let currentTab = 0;
-        {#db에서 가져와서 대체할 예정#}
-        {#jinja 문법으로 가져와서 비교#}
-        {#{% mbti_list == {{ mbti_list }} %}#}
-        let mbti_list = ['INFJ', 'INTJ', 'ISTP', 'ISTJ', 'INTP',
-            'ISFJ', 'ISFP', 'INFP', 'ENTP', 'ESTP',
-            'ESTJ', 'ENTJ', 'ENFP', 'ESFJ', 'ENFJ',
-            'ESFP'];
-
-        const validation = /^[A-Za-z0-9+]*$/;
-
-        document.addEventListener("DOMContentLoaded", function (event) {
-            showTab(currentTab);
-        });
-
-        {#add barking sound#}
-
-        function bark_1() {
-            let audio = document.getElementById('big_dog_barking');
-            if (audio.paused) {
-                audio.play();
-            } else {
-                audio.pause();
-                audio.currentTime = 0
-            }
-        }
-
-        function bark_2() {
-            let audio = document.getElementById('small_dog_barking');
-            if (audio.paused) {
-                audio.play();
-            } else {
-                audio.pause();
-                audio.currentTime = 0
-            }
-        }
-
-        function showTab(n) {
-            var x = document.getElementsByClassName("tab");
-            x[n].style.display = "block";
-            if (n == 0) {
-                document.getElementById("prevBtn").style.display = "none";
-            } else {
-                document.getElementById("prevBtn").style.display = "inline";
-            }
-            if (n == (x.length - 1)) {
-                document.getElementById("nextBtn").innerHTML = '<i class="fa fa-angle-double-right"></i>';
-            } else {
-                document.getElementById("nextBtn").innerHTML = '<i class="fa fa-angle-double-right"></i>';
-            }
-            fixStepIndicator(n)
-        }
-
-        function nextPrev(n) {
-            let mbti = $('#mbti').val();
-            let bool = mbti_list.includes(mbti.toUpperCase());
-            let temp_html = ``;
-            $('#validate-mbti').empty();
-
-            if (!bool) {
-                temp_html = `<strong>wrong formation!</strong>`;
-                $('#validate-mbti').append(temp_html);
-                return false;
-            }
-
-            bark_1();
-            let x = document.getElementsByClassName("tab");
-            if (n == 1 && !validateForm()) return false;
-            x[currentTab].style.display = "none";
-            currentTab = currentTab + n;
-            if (currentTab >= x.length) {
-                document.getElementById("nextprevious").style.display = "none";
-                document.getElementById("all-steps").style.display = "none";
-                document.getElementById("register").style.display = "none";
-                document.getElementById("text-message").style.display = "block";
-            }
-            //console.log(currentTab)
-            if (currentTab == 3) {
-                var div = document.getElementById("text-message");
-                div.className = "show";
-                setTimeout(function () {
-                    div.className = 'hide';
-                    save_survey();
-                }, 1000);
-            }
-            showTab(currentTab);
-        }
-
-        function validateForm() {
-            let x, y, i, valid = true;
-            x = document.getElementsByClassName("tab");
-            y = x[currentTab].getElementsByTagName("input");
-            console.log(y)
-            for (i = 0; i < y.length; i++) {
-                if (y[i].value == "") {
-                    y[i].className += " invalid!";
-                    valid = false;
-                }
-            }
-            if (valid) {
-                document.getElementsByClassName("step")[currentTab].className += " finish";
-            }
-            return valid;
-        }
-
-        function fixStepIndicator(n) {
-            var i, x = document.getElementsByClassName("step");
-            for (i = 0; i < x.length; i++) {
-                x[i].className = x[i].className.replace(" active", "");
-            }
-            x[n].className += " active";
-        }
-
-        function save_survey() {
-            bark_2();
-            let mbti = $('#mbti').val();
-            let size_dog = $('#size-dog').val();
-            let size_house = $('#size-house').val();
-            let nowTime = new Date().toLocaleDateString().split('T')[0];
-
-            $.ajax({
-                type: "POST",
-                url: "/save_form",
-                data: {
-                    mbti_give: mbti,
-                    size_dog_give: size_dog,
-                    size_house_give: size_house,
-                    time_give: nowTime
-                },
-                success: function (response) {
-                    //alert(response["msg"]);
-                    window.location.href = "/result";
-                }
-            });
-        }
-    </script>
 </head>
+<script>
+    let currentTab = 0;
+    const mbti_list = [   'INFJ', 'INTJ', 'ISTP', 'ISTJ', 'INTP', 'ISFJ', 'ISFP', 'INFP', 'ENTP', 'ESTP',
+                        'ESTJ', 'ENTJ', 'ENFP', 'ESFJ', 'ENFJ', 'ESFP'  ];
+
+    const validation = /^[A-Za-z0-9+]*$/;
+
+    document.addEventListener("DOMContentLoaded", function (event) {
+        showTab(currentTab);
+    });
+
+    // 개짖는 소리 기능
+    function bark_1() {
+        let audio = document.getElementById('big_dog_barking');
+        if (audio.paused) {
+            audio.play();
+        } else {
+            audio.pause();
+            audio.currentTime = 0
+        }
+    }
+    function bark_2() {
+        let audio = document.getElementById('small_dog_barking');
+        if (audio.paused) {
+            audio.play();
+        } else {
+            audio.pause();
+            audio.currentTime = 0
+        }
+    }
+
+    // 알맞은 탭 노출 ( 상단 동그라미 )
+    function showTab(n) {
+        let x = document.getElementsByClassName("tab");
+        x[n].style.display = "block";
+        if (n == 0) {
+            document.getElementById("prevBtn").style.display = "none";
+        } else {
+            document.getElementById("prevBtn").style.display = "inline";
+        }
+        if (n == (x.length - 1)) {
+            document.getElementById("nextBtn").innerHTML = '<i class="fa fa-angle-double-right"></i>';
+        } else {
+            document.getElementById("nextBtn").innerHTML = '<i class="fa fa-angle-double-right"></i>';
+        }
+        fixStepIndicator(n)
+    }
+
+    /*
+    1. 탭 이동 ( n -> +-1 ) 탭 번호 카운트
+    2. 마지막 탭으로 가면 로딩창 띄우고 자동으로 결과노출
+    3. validation
+     */
+    function nextPrev(n) {
+        let mbti = $('#mbti').val();
+        let bool = mbti_list.includes(mbti.toUpperCase());
+        let temp_html = ``;
+        $('#validate-mbti').empty();
+
+        if (!bool && mbti!='') {
+            temp_html = `<strong style="color:red">${mbti}? 이건 mbti 가 아니에요!</strong>`;
+            $('#validate-mbti').append(temp_html);
+            return false;
+        }
+
+        bark_1();
+        let x = document.getElementsByClassName("tab");
+        if (n == 1 && !validateForm()) return false;
+        x[currentTab].style.display = "none";
+        currentTab = currentTab + n;
+        if (currentTab >= x.length) {
+            document.getElementById("nextprevious").style.display = "none";
+            document.getElementById("all-steps").style.display = "none";
+            document.getElementById("register").style.display = "none";
+            document.getElementById("text-message").style.display = "block";
+        }
+        //console.log(currentTab)
+        if (currentTab == 3) {
+            let div = document.getElementById("text-message");
+            div.className = "show";
+            bark_2();
+            setTimeout(function () {
+                div.className = 'hide';
+                save_survey();
+            }, 2000);
+
+        }
+        showTab(currentTab);
+    }
+
+    // input 값이 공란이 아닐 경우 class 를 추가, true 리턴 기능
+    function validateForm() {
+        let x, y, i, valid = true;
+        let temp_html = ``;
+        x = document.getElementsByClassName("tab");
+        y = x[currentTab].getElementsByTagName("input");
+        console.log(y)
+        for (i = 0; i < y.length; i++) {
+            if (y[i].value == "") {
+                temp_html = `<strong style="color:red">답변해주세요!</strong>`;
+                $('#validate-mbti').append(temp_html);
+
+                y[i].className += " invalid!";
+                valid = false;
+            }
+        }
+        if (valid) {
+            document.getElementsByClassName("step")[currentTab].className += " finish";
+        }
+        return valid;
+    }
+
+    // step 에 따라 해당하는 아이콘 강조 기능
+    function fixStepIndicator(n) {
+        var i, x = document.getElementsByClassName("step");
+        for (i = 0; i < x.length; i++) {
+            x[i].className = x[i].className.replace(" active", "");
+        }
+        x[n].className += " active";
+    }
+
+    // 설문지 저장 기능
+    function save_survey() {
+
+        let mbti = $('#mbti').val();
+        let id = $('#id').val();
+        let size_dog = $('#size-dog').val();
+        let size_house = $('#size-house').val();
+        let nowTime = new Date().toLocaleDateString().split('T')[0];
+
+        $.ajax({
+            type: "POST",
+            url: "/save_form",
+            data: {
+                id_give:id,
+                mbti_give: mbti,
+                size_dog_give: size_dog,
+                size_house_give: size_house,
+                time_give: nowTime
+            },
+            success: function (response) {
+                //alert(response["msg"]);
+                window.location.href = "/result";
+            }
+        });
+    }
+</script>
 <body>
 <div class="container mt-5">
     <div class="row d-flex justify-content-center align-items-center">
@@ -176,22 +186,21 @@
                     <span class="step"><i class="bi bi-emoji-heart-eyes-fill"></i></span> {#preference#}
                 </div>
                 <div class="tab">
-                    <h6>What's your mbti?</h6>
-                    <p><input placeholder="ex) entj" oninput="this.className = ''" id="mbti" max="4"></p>
+                    <h6>당신의 mbti를 적어주세요</h6>
+                    <p><input placeholder="ex) entj" oninput="this.className = ''" id="mbti" maxlength="4"></p>
+                    {#<input type="hidden" id="id" value="{{ info.id }}" />#}
                 </div>
                 <div class="tab">
-                    <h6>Is your house big?</h6>
-                    <p>
-                        <input placeholder="ex) yes/no" oninput="this.className = ''" id="size-house">
-                    </p>
+                    <h6>강아지를 키우기 적합한 환경인가요? (집 크기, 재정 상황 등)</h6>
+                    <p><input placeholder="ex) Y or N" oninput="this.className = ''" id="size-house" maxlength="1"></p>
                 </div>
                 <div class="tab">
-                    <h6>would you like to have a big doggo?</h6>
-                    <p><input placeholder="ex) yes/no" oninput="this.className = ''" id="size-dog"></p>
+                    <h6>큰 강아지를 선호하나요?</h6>
+                    <p><input placeholder="ex) Y or N" oninput="this.className = ''" id="size-dog" maxlength="1"></p>
                 </div>
                 <div class="thanks-message text-center" id="text-message">
                     <img src="static/loading.gif">
-                    <p>Loading...</p>
+                    <p>분석중 이에요!</p>
                 </div>
                 <p id="validate-mbti"></p>
                 <div style="overflow:auto;" id="nextprevious">

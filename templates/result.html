@@ -42,11 +42,14 @@
                 <blockquote class="blockquote blockquote-custom bg-white p-5 shadow rounded">
                     <div>
                         {#좌 mbti 사진 우 성향 설명#}
-                        {{ result.mbti }}, {{ result.person_desc }}
+                        <img src="{{ result.mbti_url }}" width="100px">, {{ result.mbti }}, {{ result.person_desc }}
                     </div>
                     <div>
                         {#좌 개 사진 우 성향 설명#}
-                        {{ result.result_L }}, {{ result.dog_desc }}
+                        <img src="{{ result.result_L_url }}" width="200px">, {{ result.result_L }}, {{ result.dog_desc }}
+                    </div>
+                    <div>
+                        {# 설문지에 나온 집크기를 토대로 집이 작은경우 -> 상황을 고려하라고 충고 #}
                     </div>
 
                     <footer class="blockquote-footer pt-4 mt-4 border-top">
