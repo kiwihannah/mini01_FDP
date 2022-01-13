@@ -31,14 +31,25 @@ body {
 }
 
 
-.dog-info{
-
+.dog-msg{
+    position: relative;
+    border: 1px solid #CED4DA;
+    border-radius: 8px;
+    width: 50%;
+    background-color: #EEEEEE;
+    left: 210px;
+    top: -235px;
+    padding: 10px;
+    margin: 160px 0px 0px 0px;
 }
 
-.mbti-info{
-
-}
-
-.return-btn{
-
+.mbti-msg{
+    position: relative;
+    border: 1px solid #CED4DA;
+    border-radius: 8px;
+    width: 70%;
+    background-color: #EEEEEE;
+    left: 140px;
+    top: -80px;
+    padding: 10px;
 }

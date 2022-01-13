@@ -28,29 +28,16 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
 
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+
     <script>
         // 설문지에 여건이 안좋다고 답변하면 알림 띄움
-        if ('Y' != '{{ house_size }}') {
-            alert('기타 여건이 안 좋다면 당장 키우는 것은 다시 고려해보세요');
-        }
-
-        function time2str(date) {
-            let today = new Date()
-            let time = (today - date) / 1000 / 60  // 분
-
-            if (time < 60) {
-                return parseInt(time) + "분 전"
+        $(document).ready(function () {
+            if ('N' == '{{ house_size }}') {
+                alert('기타 여건이 안 좋다면 당장 키우는 것은 다시 고려해보세요');
             }
-            time = time / 60  // 시간
-            if (time < 24) {
-                return parseInt(time) + "시간 전"
-            }
-            time = time / 24
-            if (time < 7) {
-                return parseInt(time) + "일 전"
-            }
-            return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`
-        }
+        })
     </script>
 </head>
 <body>
@@ -64,28 +51,25 @@
                 <blockquote class="blockquote blockquote-custom bg-white p-5 shadow rounded">
                     <span class="badge badge-pill badge-light date">{{ ins_date }} 작성 됨</span>
 
-                    <div class="mbti-info">
-                        {#좌 mbti 사진 우 성향 설명#}
+                    <div>
                         <img src="{{ result.mbti_url }}" width="130px">
-                        <div style= "border: 1px solid #CED4DA; bordr-radius: 8px; padding: 10px; width: 51%;
-                            float: right; background-color: #EEEEEE; ">"{{ result.person_desc }} 당신 {{ result.mbti }} 이군요! "
-                        </div>
+                        <div class="mbti-msg">"{{ result.person_desc }} 당신 ! {{ result.mbti }}이군요 ! "</div>
                     </div>
-
-                    <div class="dog-info">
-                        {#좌 개 사진 우 성향 설명#}
+                    <div style="height: 180px">
                         <img src="{{ result.dog_img }}" width="200px">
-                        <div style= "border: 1px solid #CED4DA; padding: 10px; width: 51%; float: right;
-                            background-color: #EEEEEE; ">"{{ result.dog_name }}, {{ result.dog_desc }}"
-                        </div>
+                        <div class="dog-msg">"당신의 인생견은 {{ result.dog_desc }}, {{ result.dog_name }} 입니다 !"</div>
                     </div>
                     <footer class="blockquote-footer pt-4 mt-4 border-top">
-                        <div class="return-btn">
+                        <div class="return-btn date">
                             <button type="button" class="btn btn-outline-secondary"
-                                    onclick="javascript:window.location.href='/'">다시 테스트 해보기 !</button>
+                                    onclick="javascript:window.location.href='/'">다시 테스트 해보기 !
+                            </button>
+                            <button type="button" class="btn btn-outline-danger"
+                                    onclick="javascript:$.removeCookie('mytoken', {path: '/'});window.location.href='/'">
+                                쿠키 제거
+                            </button>
                         </div>
                     </footer>
-
                 </blockquote>
             </div>
         </div>

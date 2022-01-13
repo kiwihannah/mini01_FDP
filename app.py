@@ -14,6 +14,7 @@ SECRET_KEY = 'fdp'
 client = MongoClient('3.34.124.97', 27017, username="test", password="test")
 db = client.fdp
 
+
 # 로그인 해두면 -> 설문지 페이지로
 @app.route('/')
 def home():
@@ -22,6 +23,7 @@ def home():
         return render_template('form.html')
     else:
         return render_template('index.html')
+
 
 # login
 @app.route('/login', methods=['POST'])
@@ -140,6 +142,7 @@ def result():
         return render_template("result.html", result=final_result, house_size=saved_house_size, ins_date=saved_ins_date)
     else:
         return render_template('form.html')
+
 
 if __name__ == '__main__':
     app.run('0.0.0.0', port=5000, debug=True)
