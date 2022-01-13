@@ -13,7 +13,7 @@
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
 
-    <link href='{{ url_for("static", filename="form.css") }}' rel="stylesheet">
+    <link href='{{ url_for("static", filename="result.css") }}' rel="stylesheet">
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -23,6 +23,10 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
             integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
             crossorigin="anonymous"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
 
     <script>
         // 설문지에 여건이 안좋다고 답변하면 알림 띄움
@@ -56,29 +60,32 @@
 
         <div class="row">
             <div class="col-lg-6 mx-auto">
-                <blockquote class="blockquote blockquote-custom bg-white p-5 shadow rounded">
-                    {{ ins_date }} 작성 됨
-                    <div>
-                        {#좌 mbti 사진 우 성향 설명#}
-                        <img src="{{ result.mbti_url }}" width="100px">, {{ result.mbti }}, {{ result.person_desc }}
-                    </div>
-                    <div>
-                        {#좌 개 사진 우 성향 설명#}
-                        <img src="{{ result.dog_img }}" width="200px">, {{ result.dog_name }}, {{ result.dog_desc }}
-                    </div>
-                    <p id="advice">
-                        {# 설문지에 나온 집크기를 토대로 집이 작은경우 -> 상황을 고려하라고 충고 #}
-                    </p>
 
-                    <footer class="blockquote-footer pt-4 mt-4 border-top">
-                        <div>
-                            {#버튼으로 구현해주세요#}
-                            <a href="/">다시 테스트 해보기</a>
+                <blockquote class="blockquote blockquote-custom bg-white p-5 shadow rounded">
+                    <span class="badge badge-pill badge-light date">{{ ins_date }} 작성 됨</span>
+
+                    <div class="mbti-info">
+                        {#좌 mbti 사진 우 성향 설명#}
+                        <img src="{{ result.mbti_url }}" width="130px">
+                        <div style= "border: 1px solid #CED4DA; bordr-radius: 8px; padding: 10px; width: 51%;
+                            float: right; background-color: #EEEEEE; ">"{{ result.person_desc }} 당신 {{ result.mbti }} 이군요! "
                         </div>
-                        <div>
-                            {#카톡공유버튼#}
+                    </div>
+
+                    <div class="dog-info">
+                        {#좌 개 사진 우 성향 설명#}
+                        <img src="{{ result.dog_img }}" width="200px">
+                        <div style= "border: 1px solid #CED4DA; padding: 10px; width: 51%; float: right;
+                            background-color: #EEEEEE; ">"{{ result.dog_name }}, {{ result.dog_desc }}"
+                        </div>
+                    </div>
+                    <footer class="blockquote-footer pt-4 mt-4 border-top">
+                        <div class="return-btn">
+                            <button type="button" class="btn btn-outline-secondary"
+                                    onclick="javascript:window.location.href='/'">다시 테스트 해보기 !</button>
                         </div>
                     </footer>
+
                 </blockquote>
             </div>
         </div>

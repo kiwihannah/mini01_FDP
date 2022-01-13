@@ -11,9 +11,8 @@ app.config['UPLOAD_FOLDER'] = "./static/profile_pics"
 
 SECRET_KEY = 'fdp'
 
-client = MongoClient('3.35.0.78', 27017, username="test", password="test")
+client = MongoClient('3.34.124.97', 27017, username="test", password="test")
 db = client.fdp
-
 
 # 로그인 해두면 -> 설문지 페이지로
 @app.route('/')
@@ -42,7 +41,6 @@ def sign_in():
             'exp': datetime.utcnow() + timedelta(seconds=60 * 60 * 24)  # 로그인 24시간 유지
         }
         token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
-        token = token.encode('utf-8')
 
         print(f'user found {info}')
         return jsonify({'result': 'success', 'token': token, 'exists': exists})
@@ -51,19 +49,21 @@ def sign_in():
         print(f'user NOT found {info}')
         return jsonify({'result': 'fail', 'info': info})
 
+
 @app.route('/register', methods=['POST'])
 def sign_up():
     id_receive = request.form['id_give']
     pw_receive = request.form['pw_give']
     pw_hash = hashlib.sha256(pw_receive.encode('utf-8')).hexdigest()
     doc = {
-        "id": id_receive,   # 아이디
-        "pw": pw_hash,      # 비밀번호
+        "id": id_receive,  # 아이디
+        "pw": pw_hash,  # 비밀번호
     }
     print('user created')
     db.users.insert_one(doc)
 
     return jsonify({'result': 'success'})
+
 
 # 저장된 값이 있다면 노출
 @app.route('/form')
@@ -77,6 +77,7 @@ def go_form():
         return render_template('form.html', info=user_info)
     else:
         return render_template('index.html')
+
 
 # form 작성 -> 저장
 @app.route('/save_form', methods=['POST'])
@@ -109,6 +110,7 @@ def save_form():
     else:
         db.survey.insert_one(doc)
     return jsonify({'msg': '설문지 작성 완료!'})
+
 
 # 결과 노출
 @app.route('/result')

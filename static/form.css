@@ -1,3 +1,7 @@
+* {
+    font-family: 'Jua', sans-serif;
+}
+
 body {
     background: #eee
 }
@@ -12,6 +16,7 @@ body {
 
 #register {
     color: saddlebrown;
+    font-family: 'Jua', sans-serif;
 }
 
 h1 {
@@ -39,6 +44,10 @@ input.invalid {
 
 .tab {
     display: none
+}
+
+.gap {
+    padding-top: 50px;
 }
 
 button {
@@ -111,4 +120,13 @@ button:focus {
 .img {
     text-align: center;
     width: 100%;
+}
+
+.cmt {
+    padding: 120px 0px 120px 50px;
+    width: 160px;
+    float: right;
+    background-color: #58cff1;
+    background-image: url("cmt.PNG");
+    background-size: 180px;
 }

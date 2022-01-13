@@ -23,14 +23,19 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
             integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
             crossorigin="anonymous"></script>
+    <!-- google font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
     <!-- add barking sound -->
     <audio id='big_dog_barking' src='static/big_dog_barking.MP3'></audio>
     <audio id='small_dog_barking' src='static/small_dog_barking.MP3'></audio>
 </head>
 <script>
     let currentTab = 0;
-    const mbti_list = [   'INFJ', 'INTJ', 'ISTP', 'ISTJ', 'INTP', 'ISFJ', 'ISFP', 'INFP', 'ENTP', 'ESTP',
-                        'ESTJ', 'ENTJ', 'ENFP', 'ESFJ', 'ENFJ', 'ESFP'  ];
+    const mbti_list = ['INFJ', 'INTJ', 'ISTP', 'ISTJ', 'INTP', 'ISFJ', 'ISFP', 'INFP', 'ENTP', 'ESTP',
+        'ESTJ', 'ENTJ', 'ENFP', 'ESFJ', 'ENFJ', 'ESFP'];
+    const yn_list = ['y', 'n', 'Y', 'N'];
 
     const validation = /^[A-Za-z0-9+]*$/;
 
@@ -48,6 +53,7 @@
             audio.currentTime = 0
         }
     }
+
     function bark_2() {
         let audio = document.getElementById('small_dog_barking');
         if (audio.paused) {
@@ -82,17 +88,32 @@
      */
     function nextPrev(n) {
         let mbti = $('#mbti').val();
+        let size_house = $('#size-house').val();
+        let size_dog = $('#size-dog').val();
+
+        let bool_house = yn_list.includes(size_house);
+        let bool_dog = yn_list.includes(size_dog);
         let bool = mbti_list.includes(mbti.toUpperCase());
+
         let temp_html = ``;
         $('#validate-mbti').empty();
 
-        if (!bool && mbti!='') {
+        if (!bool && mbti != '') {
             temp_html = `<strong style="color:red">${mbti}? 이건 mbti 가 아니에요!</strong>`;
             $('#validate-mbti').append(temp_html);
             return false;
         }
+        if (size_house != '' && !bool_house) {
+            temp_html = `<strong style="color:red">Y or N 로 답변해주세요!</strong>`;
+            $('#validate-mbti').append(temp_html);
+            return false;
+        }
+        if (size_dog != '' && !bool_dog) {
+            temp_html = `<strong style="color:red">Y or N 로 답변해주세요!</strong>`;
+            $('#validate-mbti').append(temp_html);
+            return false;
+        }
 
-        bark_1();
         let x = document.getElementsByClassName("tab");
         if (n == 1 && !validateForm()) return false;
         x[currentTab].style.display = "none";
@@ -115,6 +136,7 @@
 
         }
         showTab(currentTab);
+        bark_1();
     }
 
     // input 값이 공란이 아닐 경우 class 를 추가, true 리턴 기능
@@ -161,7 +183,7 @@
             type: "POST",
             url: "/save_form",
             data: {
-                id_give:id,
+                id_give: id,
                 mbti_give: mbti,
                 size_dog_give: size_dog,
                 size_house_give: size_house,
@@ -179,27 +201,27 @@
     <div class="row d-flex justify-content-center align-items-center">
         <div class="col-md-8">
             <form id="regForm">
-                <h1 id="register">Survey Form</h1>
+                <h1 id="register">설문지 작성 🐾</h1>
                 <div class="all-steps" id="all-steps">
                     <span class="step"><i class="fa fa-user"></i></span> {#mbti#}
                     <span class="step"><i class="bi bi-house-door-fill"></i></span> {#house#}
                     <span class="step"><i class="bi bi-emoji-heart-eyes-fill"></i></span> {#preference#}
                 </div>
-                <div class="tab">
-                    <h6>당신의 mbti를 적어주세요</h6>
+                <div class="tab gap">
+                    <h4> ☝ 당신의 mbti를 적어주세요</h4>
                     <p><input placeholder="ex) entj" oninput="this.className = ''" id="mbti" maxlength="4"></p>
                     {#<input type="hidden" id="id" value="{{ info.id }}" />#}
                 </div>
-                <div class="tab">
-                    <h6>강아지를 키우기 적합한 환경인가요? (집 크기, 재정 상황 등)</h6>
+                <div class="tab gap">
+                    <h4> ✌ 강아지를 키우기 적합한 환경인가요? (집 크기, 재정 상황 등)</h4>
                     <p><input placeholder="ex) Y or N" oninput="this.className = ''" id="size-house" maxlength="1"></p>
                 </div>
-                <div class="tab">
-                    <h6>큰 강아지를 선호하나요?</h6>
+                <div class="tab gap">
+                    <h4> 🤟 큰 강아지를 선호하나요?</h4>
                     <p><input placeholder="ex) Y or N" oninput="this.className = ''" id="size-dog" maxlength="1"></p>
                 </div>
                 <div class="thanks-message text-center" id="text-message">
-                    <span><img src="static/loading.gif">분석중 이에요!</span>
+                    <span><img src="static/loading.gif"><div class="cmt"> ✔ 매치 분석중!</div></span>
                 </div>
                 <p id="validate-mbti"></p>
                 <div style="overflow:auto;" id="nextprevious">

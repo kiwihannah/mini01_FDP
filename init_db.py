@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 from flask import Flask
 
 from pymongo import MongoClient
-client = MongoClient('3.35.0.78', 27017, username='test', password='test')
+client = MongoClient('3.34.124.97', 27017, username='test', password='test')
 db = client.fdp
 
 app = Flask(__name__)
